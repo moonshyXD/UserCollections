@@ -18,10 +18,13 @@ class Goose(ABC):
     def execute(self):
         pass
 
+    def __repr__(self):
+        return f"Гусь(имя={self.name}, баланс={self.balance})"
+
 
 class WarGoose(Goose):
     def execute(self):
-        return f"{self.name} атакует! Громкость: {self.honk_volume}"
+        return f"{self.name} атакует! Атака: {self.honk_volume}"
 
 
 class HonkGoose(Goose):

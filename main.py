@@ -1,4 +1,8 @@
-from adapters import cli
+from adapters.cli import CLI
+from entities.errors import CasinoError
 
 if __name__ == "__main__":
-    cli.app()
+    try:
+        CLI.hello()
+    except CasinoError:
+        print("")

@@ -9,7 +9,7 @@ class Chip:
     def value(self):
         return self._value
 
-    def __add__(self, other: "Chip" | int | float):
+    def __add__(self, other: ("Chip", int, float)):
         if isinstance(other, Chip):
             return Chip(self.value + other.value)
         elif isinstance(other, (int, float)):
