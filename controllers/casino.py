@@ -23,7 +23,9 @@ class Casino:
         if len(self._player_collection) == 0:
             raise EntitiesError(f"Нет игроков для события {action}")
 
-    def _check_goose_collection(self, collection: list[Goose] | GooseCollection, action: str):
+    def _check_goose_collection(
+        self, collection: list[Goose] | GooseCollection, action: str
+    ):
         if len(collection) == 0:
             raise EntitiesError(f"Нет игроков для события {action}")
 
@@ -48,9 +50,9 @@ class Casino:
         self._check_players_collection(action)
         self._check_goose_collection(war_geese, action)
 
-        goose = random.choice(war_geese, seed=seed)
-        player = random.choice(self._player_collection.collection, seed=seed)
-        damage = random.randint(1, 100, seed=seed)
+        goose = random.choice(war_geese)
+        player = random.choice(self._player_collection.collection)
+        damage = random.randint(1, 100)
 
         cur_chip = self._players_balance[player.name]
         new_value = max(0, cur_chip.value - damage)
@@ -66,8 +68,8 @@ class Casino:
         ]
         self._check_goose_collection(honk_geese, action)
 
-        goose = random.choice(honk_geese, seed=seed)
-        honk_volume = random.randint(1, 100, seed=seed)
+        goose = random.choice(honk_geese)
+        honk_volume = random.randint(1, 100) # БРАТЬ ГРОМКОСТЬ ИЗ ГУСЯ
 
         if honk_volume <= 50:
             print("[HONK] Гусь кричит! Случайный игрок оглушился и потерял 10 фишек")
@@ -91,9 +93,9 @@ class Casino:
         self._check_players_collection(action)
         self._check_goose_collection(self._check_goose_collection, action)
 
-        goose = random.choice(self._goose_collection, seed=seed)
-        player = random.choice(self._player_collection.collection, seed=seed)
-        stolen = random.randint(1, 100, seed=seed)
+        goose = random.choice(self._goose_collection)
+        player = random.choice(self._player_collection.collection)
+        stolen = random.randint(1, 100)
 
         player_chip = self._players_balance[player.name]
         new_player_value = max(0, player_chip.value - stolen)
@@ -109,10 +111,10 @@ class Casino:
         print(f"Начинается событие {action}")
         self._check_players_collection(action)
 
-        player = random.choice(self._player_collection.collection, seed=seed)
+        player = random.choice(self._player_collection.collection)
         casino_x = [0, 0.5, 1, 2, 3, 10]
         casino_procent = [30, 40, 10, 10, 5, 5]
-        x = random.choices(casino_x, weights=casino_procent, seed=seed)[0]
+        x = random.choices(casino_x, weights=casino_procent)[0]
 
         current_chip = self._players_balance[player.name]
         old_value = current_chip.value
@@ -143,7 +145,7 @@ class Casino:
 
         for player in self._player_collection.collection:
             switched_player = random.choice(
-                self._player_collection.collection, seed=seed
+                self._player_collection.collection
             )
             (
                 self._players_balance[player.name],
@@ -154,7 +156,7 @@ class Casino:
             )
 
         for goose in self._goose_collection.collection:
-            switched_goose = random.choice(self._goose_collection.collection, seed=seed)
+            switched_goose = random.choice(self._goose_collection.collection)
             (
                 self._geese_balance[goose.name],
                 self._geese_balance[switched_goose.name],
@@ -172,20 +174,24 @@ class Casino:
         print(f"Начинается событие {action}")
         self._check_players_collection(action)
 
-        player = random.choice(self._player_collection.collection, seed=seed)
+        player = random.choice(self._player_collection.collection)
         self._players_balance[player.name] += 50
 
-        print("[FREEBET] Случайный игрок берёт аккаунт своего друга и регистрирует фрибет для него")
+        print(
+            "[FREEBET] Случайный игрок берёт аккаунт своего друга и регистрирует фрибет для него"
+        )
 
     def fruit_party(self, seed: int | None = None):
         action = "[FRUIT-PARTY]"
         print(f"Начинается событие {action}")
         self._check_players_collection(action)
 
-        player = random.choice(self._player_collection.collection, seed=seed)
+        player = random.choice(self._player_collection.collection)
         self._players_balance[player.name] = 0
 
-        print("[FRUIT-PARTY] Случайный игрок зашел в невезучий слот fruit-party и проиграл всё")
+        print(
+            "[FRUIT-PARTY] Случайный игрок зашел в невезучий слот fruit-party и проиграл всё"
+        )
 
     def flock_steal(self, seed: int | None = None):
         action = "[FLOCK_STEAL]"
@@ -206,15 +212,12 @@ class Casino:
             goose = random.choice(war_geese)
             self._geese_balance[goose] += int(amount / geese_count)
 
-        print("[FLOCK-STEAL] Гуси собрались в стаю и украли у случайного игрока часть денег. Они распределили деньги игрока по целым частям, а остатки потеряли")
+        print(
+            "[FLOCK-STEAL] Гуси собрались в стаю и украли у случайного игрока часть денег. Они распределили деньги игрока по целым частям, а остатки потеряли"
+        )
 
     def run_simulation(self, steps: int = 20, seed: int | None = None):
-        if seed is not None:
-            random.seed(seed)
-
-        # регистрация энитити (гуси и игроки)
-        # ...
-        #
+        self._set_seed(seed)
 
         actions = {
             1: self.attack(seed),
@@ -223,7 +226,8 @@ class Casino:
             4: self.steal(seed),
             5: self.sabotage(seed),
             6: self.freebet(seed),
-            7: self.fruit_party(seed)
+            7: self.fruit_party(seed),
+            8: self.flock_steal(seed),
         }
         for _ in range(steps):
             action = random.randint(1, 7)

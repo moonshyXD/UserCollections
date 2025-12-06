@@ -15,4 +15,4 @@ class Player:
         return self._name
 
     def __repr__(self):
-        return f"Игрок(имя={self.name.value}, баланс={self.balance.value})"
+        return f"(имя={self.name}, баланс={self.balance.value})"

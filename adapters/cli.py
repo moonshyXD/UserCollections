@@ -2,6 +2,8 @@ import questionary
 
 from controllers.casino import Casino
 from entities.errors import CasinoError
+from entities.player import Player
+from entities.goose import WarGoose, HonkGoose
 
 
 class CLI:
@@ -27,8 +29,8 @@ class CLI:
                         "Запустить симуляцию",
                         "Добавить игрока",
                         "Добавить гуся",
-                        "Выход"
-                    ]
+                        "Выход",
+                    ],
                 ).ask()
 
                 match choice:
@@ -45,21 +47,39 @@ class CLI:
 
     @staticmethod
     def add_player(casino: Casino):
-        
-        casino.register_player()
+        name = questionary.text("Имя игрока:").ask()
+        balance = int(questionary.text("Баланс:", default="100").ask())
+        player = Player(name, balance)
+        casino.register_player(player)
 
     @staticmethod
     def add_goose(casino: Casino):
-        pass
+        goose_type = questionary.select(
+            "Выберите тип гуся:", choices=["WarGoose", "HonkGoose"]
+        ).ask()
+
+        name = questionary.text("Имя гуся:").ask()
+        volume = int(questionary.text("Громкость (1-100):", default="50").ask())
+
+        if "War" in goose_type:
+            goose = WarGoose(name, volume)
+        else:
+            goose = HonkGoose(name, volume)
+
+        casino.register_goose(goose)
 
     @staticmethod
     def run_simulation(casino: Casino):
-        # ДОБАВИТЬ ВАЛИДАЦИЮ ТОЛЬКО ПОЛОЖИТЕЛЬНЫХ
-        steps = questionary.text("Сколько событий будет в программе?", default="20").ask()
-        seed_choice = questionary.select("Хотите установить seed?", choices=["Да", "Нет"]).ask()
+        steps = questionary.text(
+            "Сколько событий будет в программе?", default="20"
+        ).ask()
+        seed_choice = questionary.select(
+            "Хотите установить seed?", choices=["Да", "Нет"]
+        ).ask()
         seed = None
-        if seed_choice:
-            seed = questionary.text("какой seed хотите установить?", default="None").ask()
+        if seed_choice == "Да":
+            seed = questionary.text(
+                "Какой seed хотите установить?", default="None"
+            ).ask()
 
-        print(seed)
         casino.run_simulation(steps, seed)

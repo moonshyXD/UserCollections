@@ -19,7 +19,7 @@ class Goose(ABC):
         pass
 
     def __repr__(self):
-        return f"Гусь(имя={self.name}, баланс={self.balance})"
+        return f"Гусь(имя={self.name}, громкость={self.honk_volume})"
 
 
 class WarGoose(Goose):
