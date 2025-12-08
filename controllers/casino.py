@@ -1,11 +1,14 @@
-from usecases.dict_collection import CasinoBalance
-from usecases.list_collections import PlayerCollection, GooseCollection
-from entities.goose import Goose, WarGoose, HonkGoose
-from entities.player import Player
+import random
+import time
+from collections.abc import Sequence
+from typing import Iterator
+
 from entities.chip import Chip
 from entities.errors import EntitiesError
-
-import random
+from entities.goose import Goose, HonkGoose, WarGoose
+from entities.player import Player
+from usecases.dict_collection import CasinoBalance
+from usecases.list_collections import GooseCollection, PlayerCollection
 
 
 class Casino:
@@ -15,36 +18,36 @@ class Casino:
         self._geese_balance = CasinoBalance()
         self._player_collection = PlayerCollection()
 
-    def _set_seed(self, seed: int | None = None):
+    def _set_seed(self, seed: int | None = None) -> None:
         if seed is not None:
             random.seed(seed)
 
-    def _check_players_collection(self, action: str):
+    def _check_players_collection(self, action: str) -> None:
         if len(self._player_collection) == 0:
             raise EntitiesError(f"Нет игроков для события {action}")
 
     def _check_goose_collection(
-        self, collection: list[Goose] | GooseCollection, action: str
-    ):
+        self, collection: Sequence[Goose] | GooseCollection, action: str
+    ) -> None:
         if len(collection) == 0:
-            raise EntitiesError(f"Нет игроков для события {action}")
+            raise EntitiesError(f"Нет гусей для события {action}")
 
     def register_goose(self, value: Goose) -> None:
         self._goose_collection.append(value)
-        self._geese_balance[value.name] = 0
+        self._geese_balance[value.name] = Chip(0)
 
     def register_player(self, value: Player) -> None:
         self._player_collection.append(value)
         self._players_balance[value.name] = value.balance
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[Player]:
         return iter(self._player_collection)
 
-    def attack(self, seed: int | None = None):
+    def attack(self) -> None:
         action = "[ATTACK]"
         print(f"Начинается событие {action}")
         war_geese = [
-            goose for goose in self._goose_collection if isinstance(goose, WarGoose)
+            g for g in self._goose_collection if isinstance(g, WarGoose)
         ]
 
         self._check_players_collection(action)
@@ -60,38 +63,46 @@ class Casino:
 
         print(f"[ATTACK] {goose.name} атакует {player.name}! Урон: {damage}")
 
-    def honk(self, seed: int | None = None):
+    def honk(self) -> None:
         action = "[HONK]"
         print(f"Начинается событие {action}")
         honk_geese = [
-            goose for goose in self._goose_collection if isinstance(goose, HonkGoose)
+            g for g in self._goose_collection if isinstance(g, HonkGoose)
         ]
         self._check_goose_collection(honk_geese, action)
+        self._check_players_collection(action)
 
         goose = random.choice(honk_geese)
-        honk_volume = random.randint(1, 100) # БРАТЬ ГРОМКОСТЬ ИЗ ГУСЯ
+        honk_volume = goose.honk_volume
 
         if honk_volume <= 50:
-            print("[HONK] Гусь кричит! Случайный игрок оглушился и потерял 10 фишек")
+            print(
+                "[HONK] Гусь кричит!",
+                "Случайный игрок оглушился и потерял 10 фишек",
+            )
             player = random.choice(self._player_collection.collection)
-            self._player_collection[player.name] -= 10
+            current = self._players_balance[player.name]
+            self._players_balance[player.name] = current - 10
         else:
             print(
-                "[HONK] Гусь кричит! Крик был слишком громким, он оглушил случайного гуся и тот потерял 10 фишек"
+                "[HONK] Гусь кричит! Крик был слишком громким,",
+                "он оглушил случайного гуся и тот потерял 10 фишек",
             )
             random_goose = random.choice(self._goose_collection.collection)
-            self._geese_balance[random_goose.name] -= 10
+            current = self._geese_balance[random_goose.name]
+            self._geese_balance[random_goose.name] = current - 10
 
         print(
-            "[HONK] Гусь сломал свой голос! Он больше не может кричать и выходит из игры =("
+            "[HONK] Гусь сломал свой голос!",
+            "Он больше не может кричать и выходит из игры =(",
         )
         self._goose_collection.remove(goose)
 
-    def steal(self, seed: int | None = None):
+    def steal(self) -> None:
         action = "[STEAL]"
         print(f"Начинается событие {action}")
         self._check_players_collection(action)
-        self._check_goose_collection(self._check_goose_collection, action)
+        self._check_goose_collection(self._goose_collection, action)
 
         goose = random.choice(self._goose_collection)
         player = random.choice(self._player_collection.collection)
@@ -102,11 +113,13 @@ class Casino:
         self._players_balance[player.name] = Chip(new_player_value)
 
         goose_chip = self._geese_balance[goose.name]
-        self._geese_balance[goose.name] = goose_chip + stolen
+        self._geese_balance[goose.name] = (
+            goose_chip + player_chip - new_player_value
+        )
 
-        print(f"[STEAL] {goose.name} крадет {player.name}! Украдено: {stolen}")
+        print(f"[STEAL] {goose.name} крадёт {player.name}! Украдено: {stolen}")
 
-    def bet(self, seed: int | None = None):
+    def bet(self) -> None:
         action = "[BET]"
         print(f"Начинается событие {action}")
         self._check_players_collection(action)
@@ -135,102 +148,109 @@ class Casino:
             case 10:
                 print("[BET] Игрок выиграл у казино!!!", end=" ")
 
-        print(f"Ему выпал х{x}\nБаланс: {old_value} → {new_value}")
+        print(f"Ему выпал х{x}")
 
-    def sabotage(self, seed: int | None = None):
+    def sabotage(self) -> None:
         action = "[SABOTAGE]"
         print(f"Начинается событие {action}")
         self._check_players_collection(action)
         self._check_goose_collection(self._goose_collection, action)
 
-        for player in self._player_collection.collection:
-            switched_player = random.choice(
-                self._player_collection.collection
-            )
-            (
-                self._players_balance[player.name],
-                self._players_balance[switched_player.name],
-            ) = (
-                self._players_balance[switched_player.name],
-                self._players_balance[player.name],
-            )
+        players = list(self._player_collection.collection)
+        player_balances = [self._players_balance[p.name] for p in players]
+        random.shuffle(player_balances)
 
-        for goose in self._goose_collection.collection:
-            switched_goose = random.choice(self._goose_collection.collection)
-            (
-                self._geese_balance[goose.name],
-                self._geese_balance[switched_goose.name],
-            ) = (
-                self._geese_balance[switched_goose.name],
-                self._geese_balance[goose.name],
-            )
+        for i in range(len(players)):
+            self._players_balance[players[i].name] = player_balances[i]
+
+        geese = list(self._goose_collection.collection)
+        goose_balances = [self._geese_balance[g.name] for g in geese]
+        random.shuffle(goose_balances)
+
+        for i in range(len(geese)):
+            self._geese_balance[geese[i].name] = goose_balances[i]
 
         print(
-            "[SABOTAGE] Событие прошло успешно! Балансы игроков и гусей были перемешаны друг с другом!"
+            "[SABOTAGE] Событие прошло успешно!",
+            "Балансы игроков и гусей были перемешаны друг с другом!",
         )
 
-    def freebet(self, seed: int | None = None):
+    def freebet(self) -> None:
         action = "[FREEBET]"
         print(f"Начинается событие {action}")
         self._check_players_collection(action)
 
         player = random.choice(self._player_collection.collection)
-        self._players_balance[player.name] += 50
+        current = self._players_balance[player.name]
+        self._players_balance[player.name] = current + 50
 
         print(
-            "[FREEBET] Случайный игрок берёт аккаунт своего друга и регистрирует фрибет для него"
+            "[FREEBET] Случайный игрок берёт аккаунт",
+            "своего друга и регистрирует фрибет для него",
         )
 
-    def fruit_party(self, seed: int | None = None):
+    def fruit_party(self) -> None:
         action = "[FRUIT-PARTY]"
         print(f"Начинается событие {action}")
         self._check_players_collection(action)
 
         player = random.choice(self._player_collection.collection)
-        self._players_balance[player.name] = 0
+        self._players_balance[player.name] = Chip(0)
 
         print(
-            "[FRUIT-PARTY] Случайный игрок зашел в невезучий слот fruit-party и проиграл всё"
+            "[FRUIT-PARTY] Случайный игрок зашел в невезучий слот",
+            "fruit-party и проиграл всё",
         )
 
-    def flock_steal(self, seed: int | None = None):
+    def flock_steal(self) -> None:
         action = "[FLOCK_STEAL]"
         print(f"Начинается событие {action}")
         war_geese = [
-            goose for goose in self._goose_collection if isinstance(goose, WarGoose)
+            g for g in self._goose_collection if isinstance(g, WarGoose)
         ]
         self._check_players_collection(action)
         self._check_goose_collection(war_geese, action)
 
         geese_count = random.randint(1, len(war_geese))
         player = random.choice(self._player_collection.collection)
-        old_balance = self._players_balance[player.name]
-        amount = random.randint(1, old_balance)
-        new_balance = old_balance - amount
-        self._players_balance[player.name] = new_balance
+        player_chip = self._players_balance[player.name]
+        if player_chip.value == 0:
+            print("[FLOCK_STEAL] У игрока нет фишек для кражи!")
+            return
+        amount = random.randint(1, player_chip.value)
+        self._players_balance[player.name] = player_chip - amount
+
+        per_goose = amount // geese_count
         for _ in range(geese_count):
             goose = random.choice(war_geese)
-            self._geese_balance[goose] += int(amount / geese_count)
+            current = self._geese_balance[goose.name]
+            self._geese_balance[goose.name] = current + per_goose
 
         print(
-            "[FLOCK-STEAL] Гуси собрались в стаю и украли у случайного игрока часть денег. Они распределили деньги игрока по целым частям, а остатки потеряли"
+            "[FLOCK-STEAL] Гуси собрались в стаю и украли у",
+            "случайного игрока часть денег. Они распределили деньги",
+            "игрока по целым частям, а остатки потеряли",
         )
 
-    def run_simulation(self, steps: int = 20, seed: int | None = None):
+    def run_simulation(self, steps: int = 20, seed: int | None = None) -> None:
         self._set_seed(seed)
 
-        actions = {
-            1: self.attack(seed),
-            2: self.bet(seed),
-            3: self.honk(seed),
-            4: self.steal(seed),
-            5: self.sabotage(seed),
-            6: self.freebet(seed),
-            7: self.fruit_party(seed),
-            8: self.flock_steal(seed),
-        }
+        actions = [
+            self.attack,
+            self.bet,
+            self.honk,
+            self.steal,
+            self.sabotage,
+            self.freebet,
+            self.fruit_party,
+            self.flock_steal,
+        ]
         for _ in range(steps):
-            action = random.randint(1, 7)
-            actions[action]
+            action = random.choice(actions)
+            try:
+                action()
+                time.sleep(1)
+            except EntitiesError as e:
+                print(f"Ошибка: {e}")
 
         print("Симуляция событий закончена! Спасибо за игру!")

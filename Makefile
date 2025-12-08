@@ -5,3 +5,4 @@ lint:
 	ruff format .
 	ruff check --fix
 	ruff check .
+	mypy .
