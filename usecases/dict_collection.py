@@ -23,3 +23,7 @@ class CasinoBalance:
 
     def __len__(self) -> int:
         return len(self._balance)
+
+    def __repr__(self) -> None:
+        for key, value in self._balance:
+            print(f"Объект: {key}, баланс: {value}")

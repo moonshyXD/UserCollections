@@ -9,7 +9,7 @@ class BaseCollection(ABC, Generic[T]):
         self._collection: list[T] = []
 
     @property
-    def collection(self) -> list[T]:
+    def collection(self):
         return self._collection
 
     def __getitem__(self, index: int) -> T:
@@ -27,4 +27,8 @@ class BaseCollection(ABC, Generic[T]):
 
     @abstractmethod
     def remove(self, value: T) -> None:
+        pass
+
+    @abstractmethod
+    def __repr__(self):
         pass

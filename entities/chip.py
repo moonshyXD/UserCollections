@@ -1,6 +1,4 @@
-from typing import Union
-
-from entities.errors import ValidationError
+from entities.validators import validate_chip
 
 
 class Chip:
@@ -20,15 +18,14 @@ class Chip:
     def total(self) -> int:
         return self._value * self._denomination
 
-    def __add__(self, other: Union["Chip", int, float]) -> "Chip":
+    @validate_chip
+    def __add__(self, other: list["Chip", int, float]) -> "Chip":
         if isinstance(other, Chip):
             return Chip(self.total + other.total, denomination=1)
         elif isinstance(other, (int, float)):
             return Chip(self.total + int(other), denomination=1)
 
-        raise ValidationError("Объект должен быть фишкой или числом")
-
-    def __sub__(self, other: Union["Chip", int, float]) -> "Chip":
+    def __sub__(self, other: list["Chip", int, float]) -> "Chip":
         if isinstance(other, Chip):
             new_value = max(0, self.total - other.total)
             return Chip(new_value, denomination=1)
@@ -36,10 +33,8 @@ class Chip:
             new_value = max(0, self.total - int(other))
             return Chip(new_value, denomination=1)
 
-        raise ValidationError("Объект должен быть фишкой или числом")
-
     def __repr__(self) -> str:
         if self.denomination == 1:
             return f"Фишка({self.value})"
 
-        return f"Фишка ({self.value}x{self.denomination}={self.total})"
+        return f"({self.value}x{self.denomination}={self.total})"
