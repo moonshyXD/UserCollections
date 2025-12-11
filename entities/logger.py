@@ -2,13 +2,15 @@ import logging
 
 
 class Logger:
+    """Класс для логирования событий в казино"""
+
     @staticmethod
     def setup_logging() -> None:
         """
         Настраивает логирование
         """
         logging.basicConfig(
-            filename="shell.log",
+            filename="casino.log",
             level=logging.INFO,
             format="[%(asctime)s] %(levelname)s: %(message)s",
             datefmt="%Y-%m-%d %H:%M:%S",
@@ -37,3 +39,40 @@ class Logger:
         :param message: Сообщение об ошибке
         """
         logging.error(f"{type(message).__name__}: {message}")
+
+    @staticmethod
+    def event_start(event_name: str) -> None:
+        """
+        Логирует начало события казино
+        :param event_name: Название события
+        """
+        logging.info(f"EVENT_START: {event_name}")
+
+    @staticmethod
+    def balance_change(player: str, old: int, new: int) -> None:
+        """
+        Логирует изменение баланса
+        :param player: Имя игрока
+        :param old: Старый баланс
+        :param new: Новый баланс
+        """
+        logging.info(f"BALANCE: {player}: {old} → {new}")
+
+    @staticmethod
+    def chip_added(chip_value: int, reason: str) -> None:
+        """
+        Логирует добавление фишки в историю
+        :param chip_value: Значение фишки
+        :param reason: Причина добавления
+        """
+        logging.info(f"CHIP: Фишка({chip_value}) - {reason}")
+
+    @staticmethod
+    def entity_removed(entity_type: str, name: str, details: str = "") -> None:
+        """
+        Логирует удаление сущности
+        :param entity_type: Тип сущности (Игрок/Гусь)
+        :param name: Имя
+        :param details: Дополнительные детали
+        """
+        logging.info(f"REMOVED: {entity_type} {name} {details}")

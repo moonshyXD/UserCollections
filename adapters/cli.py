@@ -51,7 +51,6 @@ class CLI:
                         CLI.clear_collections(casino)
                     case "Посмотреть коллекцию":
                         CLI.get_collection(casino)
-
             except CasinoError as message:
                 print(f"{type(message).__name__}: {message}")
 
@@ -67,7 +66,6 @@ class CLI:
         goose_type = questionary.select(
             "Выберите тип гуся:", choices=["WarGoose", "HonkGoose"]
         ).ask()
-
         name = questionary.text("Имя гуся:").ask()
         volume = int(
             questionary.text("Громкость (1-100):", default="50").ask()
@@ -78,7 +76,6 @@ class CLI:
             goose = WarGoose(name, volume)
         else:
             goose = HonkGoose(name, volume)
-
         casino.register_goose(goose)
 
     @staticmethod
@@ -154,15 +151,18 @@ class CLI:
         steps = questionary.text(
             "Сколько событий будет в программе?", default="20"
         ).ask()
+
         seed_choice = questionary.select(
             "Хотите установить seed?", choices=["Да", "Нет"]
         ).ask()
 
         seed: int | None = None
         if seed_choice == "Да":
-            seed = int(questionary.text(
-                "Какой seed хотите установить?", default="42"
-            ).ask())
+            seed = int(
+                questionary.text(
+                    "Какой seed хотите установить?", default="42"
+                ).ask()
+            )
 
         casino.run_simulation(int(steps), seed)
 
@@ -172,6 +172,7 @@ class CLI:
             "Какую коллекцию вы хотите выбрать?",
             choices=["Списковая", "Словарная"],
         ).ask()
+
         if collection == "Списковая":
             list_collection = questionary.select(
                 "Какую списковую коллекцию вы хотите выбрать?",
@@ -181,21 +182,23 @@ class CLI:
                     "Коллекция фишек",
                 ],
             ).ask()
+
             match list_collection:
                 case "Коллекция игроков":
-                    for index, name in enumerate(casino._player_collection):
-                        print(f"{index + 1}: {name}")
+                    for index, player in enumerate(casino._player_collection):
+                        print(f"{index + 1}: {player}")
                 case "Коллекция гусей":
-                    for index, name in enumerate(casino._goose_collection):
-                        print(f"{index + 1}: {name}")
+                    for index, goose in enumerate(casino._goose_collection):
+                        print(f"{index + 1}: {goose}")
                 case "Коллекция фишек":
-                    for index, name in enumerate(casino._chips_history):
-                        print(f"{index + 1}: {name}")
+                    for index, transaction in enumerate(casino._chips_history):
+                        print(f"{index + 1}: {transaction}")
         else:
             dict_collection = questionary.select(
                 "Какую словарную коллекцию вы хотите выбрать?",
                 choices=["Балансы игроков", "Балансы гусей"],
             ).ask()
+
             match dict_collection:
                 case "Балансы игроков":
                     for name, balance in casino._players_balance:

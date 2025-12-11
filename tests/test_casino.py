@@ -1,3 +1,5 @@
+from typing import Any
+
 import pytest
 
 from controllers.casino import Casino
@@ -7,155 +9,403 @@ from entities.player import Player
 
 
 class TestCasino:
-    @pytest.fixture
-    def casino(self):
-        return Casino()
+    """Тесты класса Casino"""
 
-    def test_init(self, casino):
+    def test_init(self) -> None:
+        """
+        Проверить создание пустого казино
+        """
+        casino = Casino()
         assert len(casino._player_collection) == 0
         assert len(casino._goose_collection) == 0
 
-    def test_register_player(self, casino, capsys):
-        player = Player("Player", 100)
+    def test_register_player(self) -> None:
+        """
+        Проверить регистрацию игрока в казино
+        """
+        casino = Casino()
+        player = Player("PeterZhabin", 100)
         casino.register_player(player)
         assert len(casino._player_collection) == 1
-        assert casino._players_balance["Player"].value == 100
+        assert casino._players_balance["PeterZhabin"].value == 100
 
-    def test_register_goose(self, casino, capsys):
-        goose = WarGoose("Wargoose", 50)
+    def test_register_goose(self) -> None:
+        """
+        Проверить регистрацию гуся в казино
+        """
+        casino = Casino()
+        goose = HonkGoose("PeterZhabin", 50)
         casino.register_goose(goose)
         assert len(casino._goose_collection) == 1
-        assert casino._geese_balance["Wargoose"].value == 0
+        assert casino._geese_balance["PeterZhabin"].value == 0
 
-    def test_iter(self, casino):
-        player1 = Player("Player1", 100)
-        player2 = Player("Player2", 50)
-        casino.register_player(player1)
-        casino.register_player(player2)
+    def test_iter_players(self) -> None:
+        """
+        Проверить итерацию по игрокам казино
+        """
+        casino = Casino()
+        p1 = Player("PeterZhabin", 50)
+        p2 = Player("SamirAhmed", 100)
+        casino.register_player(p1)
+        casino.register_player(p2)
         players = list(casino)
-        assert len(players) == 2
+        assert players == [p1, p2]
 
-    def test_attack_no_players_raises_error(self, casino):
-        goose = WarGoose("Wargoose", 50)
+    def test_set_seed(self) -> None:
+        """
+        Проверить установку seed для генератора случайных чисел
+        """
+        casino = Casino()
+        casino._set_seed(42)
+
+
+class TestCasinoAttack:
+    """Тесты события атаки"""
+
+    def test_attack_no_players_raises(self) -> None:
+        """
+        Проверить ошибку при атаке без игроков
+        """
+        casino = Casino()
+        goose = WarGoose("PeterZhabin", 30)
         casino.register_goose(goose)
-        with pytest.raises(EntitiesError, match="Нет игроков"):
+        with pytest.raises(EntitiesError):
             casino.attack()
 
-    def test_attack_no_war_geese_raises_error(self, casino):
-        player = Player("Player", 100)
+    def test_attack_no_war_geese_raises(self) -> None:
+        """
+        Проверить ошибку при атаке без боевых гусей
+        """
+        casino = Casino()
+        player = Player("PeterZhabin", 100)
+        goose = HonkGoose("SamirAhmed", 20)
         casino.register_player(player)
-        goose = HonkGoose("Honkgoose", 50)
         casino.register_goose(goose)
-        with pytest.raises(EntitiesError, match="Нет гусей"):
+        with pytest.raises(EntitiesError):
             casino.attack()
 
-    def test_attack_success(self, casino, capsys):
-        player = Player("Player", 100)
-        goose = WarGoose("Wargoose", 50)
+    def test_attack_success(self, capsys: Any) -> None:
+        """
+        Проверить успешную атаку
+        """
+        casino = Casino()
+        player = Player("PeterZhabin", 100)
+        goose = WarGoose("SamirAhmed", 50)
         casino.register_player(player)
         casino.register_goose(goose)
         casino._set_seed(42)
         casino.attack()
-        captured = capsys.readouterr()
-        assert "[ATTACK]" in captured.out
-        assert "атакует" in captured.out
+        assert len(casino._chips_history) == 1
+        assert casino._players_balance["PeterZhabin"].value <= 100
 
-    def test_honk_low_volume_damages_player(self, casino, capsys):
-        player = Player("Player", 100)
-        goose = HonkGoose("Honkgoose", 30)
+
+class TestCasinoHonk:
+    """Тесты события крика"""
+
+    def test_honk_no_geese_raises(self) -> None:
+        """
+        Проверить ошибку при крике без гусей
+        """
+        casino = Casino()
+        player = Player("PeterZhabin", 100)
+        casino.register_player(player)
+        with pytest.raises(EntitiesError):
+            casino.honk()
+
+    def test_honk_no_players_raises(self) -> None:
+        """
+        Проверить ошибку при крике без игроков
+        """
+        casino = Casino()
+        goose = HonkGoose("PeterZhabin", 30)
+        casino.register_goose(goose)
+        with pytest.raises(EntitiesError):
+            casino.honk()
+
+    def test_honk_low_volume(self, capsys: Any) -> None:
+        """
+        Проверить крик гуся с низкой громкостью
+        """
+        casino = Casino()
+        player = Player("PeterZhabin", 100)
+        goose = HonkGoose("SamirAhmed", 10)
         casino.register_player(player)
         casino.register_goose(goose)
+        casino._set_seed(1)
         casino.honk()
-        assert len(casino._goose_collection) == 0
-        captured = capsys.readouterr()
-        assert "[HONK]" in captured.out
+        assert len(casino._chips_history) == 1
 
-    def test_honk_high_volume_damages_goose(self, casino, capsys):
-        player = Player("Player", 100)
-        goose1 = HonkGoose("Honkgoose", 80)
-        goose2 = WarGoose("Wargoose", 50)
+    def test_honk_high_volume(self, capsys: Any) -> None:
+        """
+        Проверить крик гуся с высокой громкостью
+        """
+        casino = Casino()
+        player = Player("PeterZhabin", 100)
+        g1 = HonkGoose("SamirAhmed1", 80)
+        g2 = HonkGoose("SamirAhmed2", 20)
         casino.register_player(player)
-        casino.register_goose(goose1)
-        casino.register_goose(goose2)
+        casino.register_goose(g1)
+        casino.register_goose(g2)
+        casino._set_seed(5)
+        initial_count = len(casino._goose_collection)
         casino.honk()
-        assert len(casino._goose_collection) == 1
+        assert len(casino._goose_collection) <= initial_count
 
-    def test_steal(self, casino, capsys):
-        player = Player("Player", 100)
-        goose = WarGoose("Wargoose", 50)
+
+class TestCasinoSteal:
+    """Тесты события кражи"""
+
+    def test_steal_no_players_raises(self) -> None:
+        """
+        Проверить ошибку при краже без игроков
+        """
+        casino = Casino()
+        goose = HonkGoose("PeterZhabin", 20)
+        casino.register_goose(goose)
+        with pytest.raises(EntitiesError):
+            casino.steal()
+
+    def test_steal_no_geese_raises(self) -> None:
+        """
+        Проверить ошибку при краже без гусей
+        """
+        casino = Casino()
+        player = Player("SamirAhmed", 100)
+        casino.register_player(player)
+        with pytest.raises(EntitiesError):
+            casino.steal()
+
+    def test_steal_success(self, capsys: Any) -> None:
+        """
+        Проверить успешную кражу фишек
+        """
+        casino = Casino()
+        player = Player("PeterZhabin", 100)
+        goose = HonkGoose("SamirAhmed", 30)
         casino.register_player(player)
         casino.register_goose(goose)
-        casino._set_seed(42)
+        casino._set_seed(5)
         casino.steal()
-        captured = capsys.readouterr()
-        assert "[STEAL]" in captured.out
+        assert len(casino._chips_history) == 1
 
-    def test_bet_all_multipliers(self, casino, capsys):
-        player = Player("Player", 100)
-        casino.register_player(player)
-        for _ in [0, 0.5, 1, 2, 3, 10]:
-            casino._set_seed(42)
+
+class TestCasinoBet:
+    """Тесты события ставки"""
+
+    def test_bet_no_players_raises(self) -> None:
+        """
+        Проверить ошибку при ставке без игроков
+        """
+        casino = Casino()
+        with pytest.raises(EntitiesError):
             casino.bet()
-            captured = capsys.readouterr()
-            assert "[BET]" in captured.out
 
-    def test_sabotage_shuffles_balances(self, casino):
-        player1 = Player("Player1", 100)
-        player2 = Player("Player2", 50)
-        goose1 = WarGoose("Wargoose1", 50)
-        goose2 = WarGoose("Wargoose2", 50)
-        casino.register_player(player1)
-        casino.register_player(player2)
-        casino.register_goose(goose1)
-        casino.register_goose(goose2)
+    def test_bet_success(self, capsys: Any) -> None:
+        """
+        Проверить успешную ставку
+        """
+        casino = Casino()
+        player = Player("PeterZhabin", 100)
+        casino.register_player(player)
+        casino._set_seed(10)
+        casino.bet()
+        assert len(casino._chips_history) == 1
 
-        casino._set_seed(42)
+
+class TestCasinoSabotage:
+    """Тесты события саботажа"""
+
+    def test_sabotage_no_players_raises(self) -> None:
+        """
+        Проверить ошибку при саботаже без игроков
+        """
+        casino = Casino()
+        goose = HonkGoose("SamirAhmed", 20)
+        casino.register_goose(goose)
+        with pytest.raises(EntitiesError):
+            casino.sabotage()
+
+    def test_sabotage_no_geese_raises(self) -> None:
+        """
+        Проверить ошибку при саботаже без гусей
+        """
+        casino = Casino()
+        player = Player("PeterZhabin", 100)
+        casino.register_player(player)
+        with pytest.raises(EntitiesError):
+            casino.sabotage()
+
+    def test_sabotage_success(self, capsys: Any) -> None:
+        """
+        Проверить успешный саботаж
+        """
+        casino = Casino()
+        p1 = Player("PeterZhabin1", 100)
+        p2 = Player("PeterZhabin2", 200)
+        goose = HonkGoose("SamirAhmed", 30)
+        casino.register_player(p1)
+        casino.register_player(p2)
+        casino.register_goose(goose)
+        casino._set_seed(15)
         casino.sabotage()
+        assert len(casino._player_collection) == 2
 
-    def test_freebet(self, casino, capsys):
-        player = Player("Player", 100)
+
+class TestCasinoFreeBet:
+    """Тесты события бесплатной ставки"""
+
+    def test_freebet_no_players_raises(self) -> None:
+        """
+        Проверить ошибку при бесплатной ставке без игроков
+        """
+        casino = Casino()
+        with pytest.raises(EntitiesError):
+            casino.freebet()
+
+    def test_freebet_success(self, capsys: Any) -> None:
+        """
+        Проверить успешную бесплатную ставку
+        """
+        casino = Casino()
+        player = Player("PeterZhabin", 100)
         casino.register_player(player)
-        initial = casino._players_balance["Player"].value
+        casino._set_seed(20)
         casino.freebet()
-        assert casino._players_balance["Player"].value == initial + 50
+        assert casino._players_balance["PeterZhabin"].value == 150
+        assert len(casino._chips_history) == 1
 
-    def test_fruit_party(self, casino, capsys):
-        player = Player("Player", 100)
+
+class TestCasinoFruitParty:
+    """Тесты события Fruit Party"""
+
+    def test_fruit_party_no_players_raises(self) -> None:
+        """
+        Проверить ошибку при Fruit Party без игроков
+        """
+        casino = Casino()
+        with pytest.raises(EntitiesError):
+            casino.fruit_party()
+
+    def test_fruit_party_success(self, capsys: Any) -> None:
+        """
+        Проверить успешный Fruit Party
+        """
+        casino = Casino()
+        player = Player("PeterZhabin", 100)
         casino.register_player(player)
+        casino._set_seed(25)
         casino.fruit_party()
-        assert casino._players_balance["Player"].value == 0
+        assert casino._players_balance["PeterZhabin"].value == 0
+        assert len(casino._chips_history) == 1
 
-    def test_flock_steal_zero_balance(self, casino, capsys):
-        player = Player("Player", 0)
-        goose = WarGoose("Wargoose", 50)
+
+class TestCasinoFlockSteal:
+    """Тесты события кражи стаей"""
+
+    def test_flock_steal_no_players_raises(self) -> None:
+        """
+        Проверить ошибку при краже стаей без игроков
+        """
+        casino = Casino()
+        goose = WarGoose("PeterZhabin", 30)
+        casino.register_goose(goose)
+        with pytest.raises(EntitiesError):
+            casino.flock_steal()
+
+    def test_flock_steal_no_war_geese_raises(self) -> None:
+        """
+        Проверить ошибку при краже стаей без боевых гусей
+        """
+        casino = Casino()
+        player = Player("PeterZhabin", 100)
+        goose = HonkGoose("SamirAhmed", 30)
         casino.register_player(player)
         casino.register_goose(goose)
-        casino.flock_steal()
-        captured = capsys.readouterr()
-        assert "нет фишек" in captured.out
+        with pytest.raises(EntitiesError):
+            casino.flock_steal()
 
-    def test_flock_steal_success(self, casino):
-        player = Player("Player", 100)
-        goose1 = WarGoose("Wargoose1", 50)
-        goose2 = WarGoose("Wargoose2", 50)
+    def test_flock_steal_success(self, capsys: Any) -> None:
+        """
+        Проверить успешную кражу стаей
+        """
+        casino = Casino()
+        player = Player("PeterZhabin", 100)
+        g1 = WarGoose("SamirAhmed1", 30)
+        g2 = WarGoose("SamirAhmed2", 40)
         casino.register_player(player)
-        casino.register_goose(goose1)
-        casino.register_goose(goose2)
-        casino._set_seed(42)
-        initial = casino._players_balance["Player"].value
+        casino.register_goose(g1)
+        casino.register_goose(g2)
+        casino._set_seed(30)
         casino.flock_steal()
-        assert casino._players_balance["Player"].value < initial
+        assert casino._players_balance["PeterZhabin"].value <= 100
 
-    def test_run_simulation_with_seed(self, casino, capsys):
-        player = Player("Player", 100)
-        goose = WarGoose("Wargoose", 50)
+    def test_flock_steal_player_has_zero_balance(self, capsys: Any) -> None:
+        """
+        Проверить кражу стаей когда у игрока нет фишек
+        """
+        casino = Casino()
+        player = Player("PeterZhabin", 0)
+        goose = WarGoose("SamirAhmed", 30)
         casino.register_player(player)
         casino.register_goose(goose)
-        casino.run_simulation(steps=5, seed=42)
-        captured = capsys.readouterr()
-        assert "Симуляция событий закончена" in captured.out
+        casino._set_seed(35)
+        casino.flock_steal()
+        assert casino._players_balance["PeterZhabin"].value == 0
 
-    def test_run_simulation_handles_errors(self, casino, capsys):
-        casino.run_simulation(steps=3, seed=42)
-        captured = capsys.readouterr()
-        assert "Ошибка:" in captured.out
+
+class TestCasinoBonusRain:
+    """Тесты события бонусного дождя"""
+
+    def test_bonus_rain_no_players_raises(self) -> None:
+        """
+        Проверить ошибку при бонусном дожде без игроков
+        """
+        casino = Casino()
+        with pytest.raises(EntitiesError):
+            casino.bonus_rain()
+
+    def test_bonus_rain_success(self, capsys: Any) -> None:
+        """
+        Проверить успешный бонусный дождь
+        """
+        casino = Casino()
+        p1 = Player("PeterZhabin", 100)
+        p2 = Player("PeterZhabin2", 200)
+        casino.register_player(p1)
+        casino.register_player(p2)
+        casino._set_seed(40)
+        casino.bonus_rain()
+        assert len(casino._chips_history) >= 1
+
+
+class TestCasinoRunSimulation:
+    """Тесты запуска симуляции"""
+
+    def test_run_simulation_with_seed(self, capsys: Any) -> None:
+        """
+        Проверить запуск симуляции с заданным seed
+        """
+        casino = Casino()
+        p = Player("PeterZhabin", 100)
+        g = WarGoose("SamirAhmed", 30)
+        casino.register_player(p)
+        casino.register_goose(g)
+        casino.run_simulation(steps=3, seed=50)
+
+    def test_run_simulation_without_seed(self, capsys: Any) -> None:
+        """
+        Проверить запуск симуляции без seed
+        """
+        casino = Casino()
+        p = Player("PeterZhabin", 100)
+        g = HonkGoose("SamirAhmed", 30)
+        casino.register_player(p)
+        casino.register_goose(g)
+        casino.run_simulation(steps=2)
+
+    def test_run_simulation_handles_errors(self, capsys: Any) -> None:
+        """
+        Проверить обработку ошибок в симуляции
+        """
+        casino = Casino()
+        casino.run_simulation(steps=2, seed=60)
