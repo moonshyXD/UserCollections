@@ -1,5 +1,6 @@
-import pytest
 from typing import Any
+
+import pytest
 
 from entities.chip import Chip
 from entities.errors import ValidationError

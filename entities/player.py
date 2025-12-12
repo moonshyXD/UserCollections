@@ -2,8 +2,6 @@ from entities.chip import Chip
 
 
 class Player:
-    """Класс игрока в казино"""
-
     def __init__(self, name: str, balance: int) -> None:
         """
         Инициализировать игрока

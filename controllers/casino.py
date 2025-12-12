@@ -17,8 +17,6 @@ from usecases.list_collections import (
 
 
 class Casino:
-    """Класс казино с непредвиденными событиями"""
-
     def __init__(self) -> None:
         """Инициализировать казино с пустыми коллекциями"""
         Logger.setup_logging()
@@ -418,7 +416,7 @@ class Casino:
             )
             Logger.chip_added(bonus_amount, f"Бонус дождь для {player.name}")
 
-            print(f"  → {player.name} получил {bonus_amount} фишек!")
+            print(f"{player.name} получил {bonus_amount} фишек!")
 
     def run_simulation(self, steps: int = 20, seed: int | None = None) -> None:
         """
@@ -444,7 +442,7 @@ class Casino:
         for step in range(1, steps + 1):
             action = random.choice(actions)
             try:
-                print(f"\n--- Событие {step}/{steps} ---")
+                print(f"\nСобытие {step}/{steps}")
                 action()
             except EntitiesError as e:
                 Logger.failure_execution(e)

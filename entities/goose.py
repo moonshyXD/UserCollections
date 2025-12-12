@@ -4,16 +4,13 @@ from entities.validators import validate_honk_volume
 
 
 class Goose(ABC):
-    """Абстрактный класс гуся"""
-
     def __init__(self, name: str, honk_volume: int) -> None:
         """
-        Инициализировать гуся
-        :param name: Имя гуся
-        :param honk_volume: Громкость крика гуся (1-100)
+        Инициализация гуся
+        :param _name: Имя гуся
+        :param honk_volume: Громкость крика гуся
         """
         self._name = name
-        self._honk_volume = 0
         self.honk_volume = honk_volume
 
     @property
@@ -28,7 +25,7 @@ class Goose(ABC):
     def honk_volume(self) -> int:
         """
         Получить громкость крика гуся
-        :return: Громкость крика (1-100)
+        :return: Громкость крика гуся
         """
         return self._honk_volume
 
@@ -36,45 +33,41 @@ class Goose(ABC):
     @validate_honk_volume
     def honk_volume(self, value: int) -> None:
         """
-        Установить громкость крика гуся
-        :param value: Новая громкость крика (1-100)
-        :raises ValidationError: Если громкость вне диапазона 1-100
+        Установка громкости крика гуся
+        :param value: Громкость крика гуся
+        :raises ValidationError: Если громкость вне 1-100
         """
         self._honk_volume = value
 
     @abstractmethod
     def execute(self) -> str:
         """
-        Выполнить действие гуся
-        :return: Строка с описанием действия
+        Действие гуся
+        :return: Описание действия гуся
         """
         pass
 
     def __repr__(self) -> str:
         """
-        Получить строковое представление гуся
-        :return: Строка с именем и громкостью гуся
+        Строковое представление гуся
+        :return: Имя и громкость гуся
         """
         return f"Гусь: {self._name} Громкость: {self._honk_volume}"
 
 
 class WarGoose(Goose):
-    """Класс боевого гуся"""
-
     def execute(self) -> str:
         """
-        Выполнить атаку гуся
-        :return: Строка с описанием атаки
+        Атака гуся
+        :return: Описание атаки
         """
-        return f"{self.name} атакует! Атака: {self.honk_volume}"
+        return f"{self._name} атакует! Атака: {self._honk_volume}"
 
 
 class HonkGoose(Goose):
-    """Класс кричащего гуся"""
-
     def execute(self) -> str:
         """
-        Выполнить крик гуся
-        :return: Строка с описанием крика
+        Крик гуся
+        :return: Описание крика
         """
-        return f"{self.name} кричит! Громкость: {self.honk_volume}"
+        return f"{self._name} кричит! Громкость: {self._honk_volume}"

@@ -2,8 +2,6 @@ import logging
 
 
 class Logger:
-    """Класс для логирования событий в казино"""
-
     @staticmethod
     def setup_logging() -> None:
         """
@@ -46,7 +44,7 @@ class Logger:
         Логирует начало события казино
         :param event_name: Название события
         """
-        logging.info(f"EVENT_START: {event_name}")
+        logging.info(f"EVENT-START: {event_name}")
 
     @staticmethod
     def balance_change(player: str, old: int, new: int) -> None:
@@ -71,7 +69,7 @@ class Logger:
     def entity_removed(entity_type: str, name: str, details: str = "") -> None:
         """
         Логирует удаление сущности
-        :param entity_type: Тип сущности (Игрок/Гусь)
+        :param entity_type: Тип объекта
         :param name: Имя
         :param details: Дополнительные детали
         """

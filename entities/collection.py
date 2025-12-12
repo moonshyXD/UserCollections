@@ -1,13 +1,11 @@
 from abc import ABC, abstractmethod
 from collections.abc import Sequence
-from typing import Generic, Iterator, TypeVar, Union, overload
+from typing import Any, Generic, Iterator, TypeVar, Union, overload
 
 T = TypeVar("T")
 
 
 class BaseCollection(ABC, Sequence[T], Generic[T]):
-    """Абстрактный базовый класс коллекции"""
-
     def __init__(self) -> None:
         """Инициализировать пустую коллекцию"""
         self._collection: list[T] = []
@@ -49,10 +47,11 @@ class BaseCollection(ABC, Sequence[T], Generic[T]):
         return len(self._collection)
 
     @abstractmethod
-    def append(self, value: T) -> None:
+    def append(self, value: Any, *args: Any) -> None:
         """
         Добавить элемент в коллекцию
         :param value: Элемент для добавления
+        :param args: Дополнительные аргументы
         """
         pass
 

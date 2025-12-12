@@ -8,8 +8,6 @@ from entities.validators import validate_unique_name
 
 
 class ChipTransaction:
-    """Класс транзакции фишки"""
-
     def __init__(self, chip: Chip, event: str) -> None:
         """
         Инициализировать транзакцию фишки
@@ -28,21 +26,19 @@ class ChipTransaction:
 
 
 class PlayerCollection(BaseCollection[Player]):
-    """Коллекция игроков"""
-
     @validate_unique_name
     def append(self, value: Player) -> None:
         """
         Добавить игрока в коллекцию
-        :param value: Игрок для добавления
-        :raises ValidationError: Если игрок с таким именем уже существует
+        :param value: Игрок
+        :raises ValidationError: Если игрок с таким именем существует
         """
         self._collection.append(value)
 
     def remove(self, value: Player) -> None:
         """
         Удалить игрока из коллекции
-        :param value: Игрок для удаления
+        :param value: Игрок
         """
         self._collection.remove(value)
 
@@ -55,21 +51,19 @@ class PlayerCollection(BaseCollection[Player]):
 
 
 class GooseCollection(BaseCollection[Goose]):
-    """Коллекция гусей"""
-
     @validate_unique_name
     def append(self, value: Goose) -> None:
         """
         Добавить гуся в коллекцию
-        :param value: Гусь для добавления
-        :raises ValidationError: Если гусь с таким именем уже существует
+        :param value: Гусь
+        :raises ValidationError: Если гусь с таким именем существует
         """
         self._collection.append(value)
 
     def remove(self, value: Goose) -> None:
         """
         Удалить гуся из коллекции
-        :param value: Гусь для удаления
+        :param value: Гусь
         """
         self._collection.remove(value)
 
@@ -82,13 +76,11 @@ class GooseCollection(BaseCollection[Goose]):
 
 
 class ChipCollection(BaseCollection[ChipTransaction]):
-    """Коллекция транзакций фишек"""
-
-    def append(self, chip: Chip, event: str) -> None:  # type: ignore[override]
+    def append(self, chip: Chip, event: str) -> None:
         """
         Добавить транзакцию фишки в историю
         :param chip: Фишка транзакции
-        :param event: Описание события транзакции
+        :param event: Событие транзакции
         """
         transaction = ChipTransaction(chip, event)
         self._collection.append(transaction)
