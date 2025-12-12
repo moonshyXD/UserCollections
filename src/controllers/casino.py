@@ -217,7 +217,7 @@ class Casino:
 
         player = random.choice(self._player_collection)
         casino_x = [0, 0.5, 1, 2, 3, 10]
-        casino_procent = [30, 40, 10, 10, 5, 5]
+        casino_procent = [30, 40, 10, 10, 9, 1]
         x = random.choices(casino_x, weights=casino_procent)[0]
 
         current_chip = self._players_balance[player.name]
