@@ -1,18 +1,18 @@
-from entities.chip import Chip
-from usecases.dict_collection import CasinoBalance
+from src.entities.chip import Chip
+from src.usecases.dict_collection import CasinoBalance
 
 
 class TestCasinoBalance:
     def test_init_empty(self) -> None:
         """
-        Проверить создание пустого баланса
+        Проверяет создание пустого баланса
         """
         balance = CasinoBalance()
         assert len(balance) == 0
 
     def test_setitem_with_int(self) -> None:
         """
-        Проверить установку баланса целым числом
+        Проверяет установку баланса целым числом
         """
         balance = CasinoBalance()
         balance["PeterZhabin"] = 100
@@ -21,7 +21,7 @@ class TestCasinoBalance:
 
     def test_setitem_with_chip(self) -> None:
         """
-        Проверить установку баланса фишкой
+        Проверяет установку баланса фишкой
         """
         balance = CasinoBalance()
         chip = Chip(50)
@@ -30,7 +30,7 @@ class TestCasinoBalance:
 
     def test_getitem(self) -> None:
         """
-        Проверить получение баланса по ключу
+        Проверяет получение баланса по ключу
         """
         balance = CasinoBalance()
         balance["PeterZhabin"] = 25
@@ -38,7 +38,7 @@ class TestCasinoBalance:
 
     def test_iter(self) -> None:
         """
-        Проверить итерацию по балансам
+        Проверяет итерацию по балансам
         """
         balance = CasinoBalance()
         balance["PeterZhabin"] = 10
@@ -49,7 +49,7 @@ class TestCasinoBalance:
 
     def test_len(self) -> None:
         """
-        Проверить получение количества записей в балансе
+        Проверяет получение количества записей в балансе
         """
         balance = CasinoBalance()
         balance["PeterZhabin"] = 10
@@ -58,7 +58,7 @@ class TestCasinoBalance:
 
     def test_repr(self) -> None:
         """
-        Проверить строковое представление баланса
+        Проверяет строковое представление баланса
         """
         balance = CasinoBalance()
         balance["PeterZhabin"] = 15

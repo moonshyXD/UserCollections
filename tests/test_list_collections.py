@@ -1,10 +1,10 @@
 import pytest
 
-from entities.chip import Chip
-from entities.errors import ValidationError
-from entities.goose import HonkGoose, WarGoose
-from entities.player import Player
-from usecases.list_collections import (
+from src.entities.chip import Chip
+from src.entities.errors import ValidationError
+from src.entities.goose import HonkGoose, WarGoose
+from src.entities.player import Player
+from src.usecases.list_collections import (
     ChipCollection,
     GooseCollection,
     PlayerCollection,
@@ -14,14 +14,14 @@ from usecases.list_collections import (
 class TestBaseCollection:
     def test_player_collection_init_empty(self) -> None:
         """
-        Проверить создание пустой коллекции игроков
+        Проверяет создание пустой коллекции игроков
         """
         coll = PlayerCollection()
         assert len(coll) == 0
 
     def test_player_collection_append_and_len(self) -> None:
         """
-        Проверить добавление игроков и получение длины
+        Проверяет добавление игроков и получение длины
         """
         coll = PlayerCollection()
         coll.append(Player("Peter", 100))
@@ -30,7 +30,7 @@ class TestBaseCollection:
 
     def test_player_collection_getitem(self) -> None:
         """
-        Проверить получение игрока по индексу
+        Проверяет получение игрока по индексу
         """
         coll = PlayerCollection()
         p1 = Player("Peter", 100)
@@ -39,7 +39,7 @@ class TestBaseCollection:
 
     def test_player_collection_iter(self) -> None:
         """
-        Проверить итерацию по коллекции игроков
+        Проверяет итерацию по коллекции игроков
         """
         coll = PlayerCollection()
         p1 = Player("Peter", 100)
@@ -50,7 +50,7 @@ class TestBaseCollection:
 
     def test_player_collection_remove(self) -> None:
         """
-        Проверить удаление игрока из коллекции
+        Проверяет удаление игрока из коллекции
         """
         coll = PlayerCollection()
         p1 = Player("Peter", 100)
@@ -62,7 +62,7 @@ class TestBaseCollection:
 
     def test_player_collection_property(self) -> None:
         """
-        Проверить доступ к внутренней коллекции игроков
+        Проверяет доступ к внутренней коллекции игроков
         """
         coll = PlayerCollection()
         p = Player("Peter Zhabin", 100)
@@ -71,7 +71,7 @@ class TestBaseCollection:
 
     def test_player_collection_repr(self) -> None:
         """
-        Проверить строковое представление коллекции игроков
+        Проверяет строковое представление коллекции игроков
         """
         coll = PlayerCollection()
         p = Player("Peter Zhabin", 50)
@@ -80,7 +80,7 @@ class TestBaseCollection:
 
     def test_player_collection_duplicate_name_raises(self) -> None:
         """
-        Проверить ошибку при добавлении игрока с существующим именем
+        Проверяет ошибку при добавлении игрока с существующим именем
         """
         coll = PlayerCollection()
         coll.append(Player("Peter Zhabin", 100))
@@ -89,14 +89,14 @@ class TestBaseCollection:
 
     def test_goose_collection_init_empty(self) -> None:
         """
-        Проверить создание пустой коллекции гусей
+        Проверяет создание пустой коллекции гусей
         """
         coll = GooseCollection()
         assert len(coll) == 0
 
     def test_goose_collection_append_and_len(self) -> None:
         """
-        Проверить добавление гусей и получение длины
+        Проверяет добавление гусей и получение длины
         """
         coll = GooseCollection()
         coll.append(HonkGoose("Peter", 30))
@@ -105,7 +105,7 @@ class TestBaseCollection:
 
     def test_goose_collection_getitem(self) -> None:
         """
-        Проверить получение гуся по индексу
+        Проверяет получение гуся по индексу
         """
         coll = GooseCollection()
         g = HonkGoose("Peter Zhabin", 50)
@@ -114,7 +114,7 @@ class TestBaseCollection:
 
     def test_goose_collection_iter(self) -> None:
         """
-        Проверить итерацию по коллекции гусей
+        Проверяет итерацию по коллекции гусей
         """
         coll = GooseCollection()
         g1 = HonkGoose("Peter Zhabin", 30)
@@ -125,7 +125,7 @@ class TestBaseCollection:
 
     def test_goose_collection_remove(self) -> None:
         """
-        Проверить удаление гуся из коллекции
+        Проверяет удаление гуся из коллекции
         """
         coll = GooseCollection()
         g1 = HonkGoose("Peter Zhabin", 30)
@@ -137,7 +137,7 @@ class TestBaseCollection:
 
     def test_goose_collection_property(self) -> None:
         """
-        Проверить доступ к внутренней коллекции гусей
+        Проверяет доступ к внутренней коллекции гусей
         """
         coll = GooseCollection()
         g = HonkGoose("Peter Zhabin", 20)
@@ -146,7 +146,7 @@ class TestBaseCollection:
 
     def test_goose_collection_repr(self) -> None:
         """
-        Проверить строковое представление коллекции гусей
+        Проверяет строковое представление коллекции гусей
         """
         coll = GooseCollection()
         g = HonkGoose("Peter Zhabin", 25)
@@ -155,7 +155,7 @@ class TestBaseCollection:
 
     def test_goose_collection_duplicate_name_raises(self) -> None:
         """
-        Проверить ошибку при добавлении гуся с существующим именем
+        Проверяет ошибку при добавлении гуся с существующим именем
         """
         coll = GooseCollection()
         coll.append(HonkGoose("Peter", 30))
@@ -164,14 +164,14 @@ class TestBaseCollection:
 
     def test_chip_collection_init_empty(self) -> None:
         """
-        Проверить создание пустой коллекции транзакций фишек
+        Проверяет создание пустой коллекции транзакций фишек
         """
         coll = ChipCollection()
         assert len(coll) == 0
 
     def test_chip_collection_append_and_len(self) -> None:
         """
-        Проверить добавление транзакций фишек и получение длины
+        Проверяет добавление транзакций фишек и получение длины
         """
         coll = ChipCollection()
         coll.append(Chip(10), "event1")
@@ -180,7 +180,7 @@ class TestBaseCollection:
 
     def test_chip_collection_getitem(self) -> None:
         """
-        Проверить получение транзакции по индексу
+        Проверяет получение транзакции по индексу
         """
         coll = ChipCollection()
         chip = Chip(15)
@@ -191,7 +191,7 @@ class TestBaseCollection:
 
     def test_chip_collection_iter(self) -> None:
         """
-        Проверить итерацию по коллекции транзакций
+        Проверяет итерацию по коллекции транзакций
         """
         coll = ChipCollection()
         c1 = Chip(10)
@@ -203,7 +203,7 @@ class TestBaseCollection:
 
     def test_chip_collection_remove(self) -> None:
         """
-        Проверить удаление транзакции из коллекции
+        Проверяет удаление транзакции из коллекции
         """
         coll = ChipCollection()
         coll.append(Chip(5), "event")
@@ -213,7 +213,7 @@ class TestBaseCollection:
 
     def test_chip_collection_get_history(self) -> None:
         """
-        Проверить получение истории транзакций фишек
+        Проверяет получение истории транзакций фишек
         """
         coll = ChipCollection()
         c1 = Chip(10)
@@ -227,7 +227,7 @@ class TestBaseCollection:
 
     def test_chip_collection_property(self) -> None:
         """
-        Проверить доступ к внутренней коллекции транзакций
+        Проверяет доступ к внутренней коллекции транзакций
         """
         coll = ChipCollection()
         coll.append(Chip(7), "event")
@@ -235,7 +235,7 @@ class TestBaseCollection:
 
     def test_chip_collection_repr(self) -> None:
         """
-        Проверить строковое представление коллекции транзакций
+        Проверяет строковое представление коллекции транзакций
         """
         coll = ChipCollection()
         coll.append(Chip(8), "event")

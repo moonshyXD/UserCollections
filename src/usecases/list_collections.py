@@ -1,10 +1,8 @@
-from typing import Tuple
-
-from entities.chip import Chip
-from entities.collection import BaseCollection
-from entities.goose import Goose
-from entities.player import Player
-from entities.validators import validate_unique_name
+from src.entities.chip import Chip
+from src.entities.collection import BaseCollection
+from src.entities.goose import Goose
+from src.entities.player import Player
+from src.entities.validators import validate_unique_name
 
 
 class ChipTransaction:
@@ -92,7 +90,7 @@ class ChipCollection(BaseCollection[ChipTransaction]):
         """
         self._collection.remove(value)
 
-    def get_history(self) -> list[Tuple[Chip, str]]:
+    def get_history(self) -> list[tuple[Chip, str]]:
         """
         Получить историю транзакций фишек
         :return: Список кортежей (фишка, событие)

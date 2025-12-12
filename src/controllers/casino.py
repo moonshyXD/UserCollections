@@ -3,13 +3,13 @@ import time
 from collections.abc import Sequence
 from typing import Iterator
 
-from entities.chip import Chip
-from entities.errors import EntitiesError
-from entities.goose import Goose, HonkGoose, WarGoose
-from entities.logger import Logger
-from entities.player import Player
-from usecases.dict_collection import CasinoBalance
-from usecases.list_collections import (
+from src.entities.chip import Chip
+from src.entities.errors import EntitiesError
+from src.entities.goose import Goose, HonkGoose, WarGoose
+from src.entities.logger import Logger
+from src.entities.player import Player
+from src.usecases.dict_collection import CasinoBalance
+from src.usecases.list_collections import (
     ChipCollection,
     GooseCollection,
     PlayerCollection,

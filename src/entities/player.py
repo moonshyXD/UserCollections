@@ -1,4 +1,4 @@
-from entities.chip import Chip
+from src.entities.chip import Chip
 
 
 class Player:

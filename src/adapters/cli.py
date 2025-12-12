@@ -1,9 +1,9 @@
 import questionary
 
-from controllers.casino import Casino
-from entities.errors import CasinoError
-from entities.goose import Goose, HonkGoose, WarGoose
-from entities.player import Player
+from src.controllers.casino import Casino
+from src.entities.errors import CasinoError
+from src.entities.goose import Goose, HonkGoose, WarGoose
+from src.entities.player import Player
 
 
 class CLI:
@@ -142,7 +142,7 @@ class CLI:
                 casino._goose_collection._collection.clear()
                 casino._geese_balance._balance.clear()
                 print("Коллекция гусей очищена!")
-            case "История фишек":
+            case "Историю фишек":
                 casino._chips_history._collection.clear()
                 print("История фишек очищена!")
 

@@ -1,4 +1,4 @@
-from adapters.cli import CLI
+from src.adapters.cli import CLI
 
 if __name__ == "__main__":
     try:

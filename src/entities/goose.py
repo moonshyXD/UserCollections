@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from entities.validators import validate_honk_volume
+from src.entities.validators import validate_honk_volume
 
 
 class Goose(ABC):

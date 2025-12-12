@@ -1,8 +1,8 @@
 from functools import wraps
 from typing import Any, Callable, Union
 
-from entities.errors import ValidationError
-from entities.protocols import Chip, Goose, HasCollection, Player
+from src.entities.errors import ValidationError
+from src.entities.protocols import Chip, Goose, HasCollection, Player
 
 
 def validate_honk_volume(func: Callable[..., None]) -> Callable[..., None]:

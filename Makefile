@@ -10,3 +10,8 @@ lint:
 .PHONY: testcover
 testcover:
 	pytest --cov --cov-report=term-missing
+
+.PHONY: setup
+setup:
+	curl -LsSf https://astral.sh/uv/install.sh | sh
+	uv sync

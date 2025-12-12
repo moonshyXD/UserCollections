@@ -1,6 +1,6 @@
 from typing import Union
 
-from entities.validators import validate_chip
+from src.entities.validators import validate_chip
 
 
 class Chip:
