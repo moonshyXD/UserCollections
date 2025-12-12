@@ -15,3 +15,7 @@ testcover:
 setup:
 	curl -LsSf https://astral.sh/uv/install.sh | sh
 	uv sync
+
+.PHONY: run
+run:
+	uv run main.py

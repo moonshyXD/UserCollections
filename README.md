@@ -3,8 +3,8 @@
 ## Описание
 Интерактивная симуляция казино с игроками и гусями, где случайные события влияют на ход игры.
 В симуляции реализованы различные события: атаки гусей, ставки в казино, кража фишек, саботаж, бонусы и многое другое.
-Проект построен по принципам Clean Architecture с разделением на слои: [entities](), [usecases](), [controllers](), [adapters]().
-Все логи симуляции записываются в файл `casino.log` с подробной информацией о балансах, событиях и ошибках.
+Проект построен по принципам Clean Architecture с разделением на слои: [entities](https://github.com/moonshyXD/UserCollections/tree/main/src/entities), [usecases](https://github.com/moonshyXD/UserCollections/tree/main/src/usecases), [controllers](https://github.com/moonshyXD/UserCollections/tree/main/src/controllers), [adapters](https://github.com/moonshyXD/UserCollections/tree/main/src/adapters).
+Все логи симуляции записываются в файл `casino.log`(в .gitignore, инициализируется при запуске приложения) с подробной информацией о балансах, событиях и ошибках.
 
 ## Зависимости
 
@@ -18,7 +18,6 @@ make setup
 В проекте использовались следующие библиотеки:
 - **questionary** — интерактивное меню в командной строке
 - **random** — генерация случайных событий
-
 
 ## Список событий симуляции
 
@@ -60,32 +59,12 @@ git clone https://github.com/moonshyXD/UserCollections
 cd UserCollections
 ```
 
-Установите [зависимости]()
+Установите [зависимости](https://github.com/moonshyXD/UserCollections?tab=readme-ov-file#%D0%B7%D0%B0%D0%B2%D0%B8%D1%81%D0%B8%D0%BC%D0%BE%D1%81%D1%82%D0%B8)
 
-Для успешного запуска программы следует прописать в командной строке команду:
+Активируйте виртуальное окружение:
 ```bash
-make run
+source .venv/bin/activate
 ```
-
-ИЛИ
-
-```bash
-python -m main
-```
-
-## Руководство по установке (для разработчика)
-
-Склонируйте Github репозиторий командой:
-```bash
-git clone https://github.com/moonshyXD/Terminal
-```
-
-Перейдите в папку с репозиторием:
-```bash
-cd Terminal
-```
-
-Установите основные [зависимости для пользователя]() и перейдите к установке [зависимостей для разработчика]()
 
 Для успешного запуска программы следует прописать в командной строке команду:
 ```bash
