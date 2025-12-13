@@ -29,8 +29,6 @@ from src.usecases.steal import Steal
 
 
 class Casino(CasinoProtocol):
-    logger: LoggerProtocol
-
     def __init__(self, logger: LoggerProtocol | None = None) -> None:
         """Инициализировать казино с пустыми коллекциями"""
         self.logger = logger if logger is not None else LoggerProtocol
