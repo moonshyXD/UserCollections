@@ -1,26 +1,144 @@
-from typing import Any, Protocol
-
-
-class Goose(Protocol):
-    """Заглушка для Goose"""
-
-    name: str
-    _honk_volume: int
+from typing import Any, Iterator, Protocol, Union
 
 
 class Player(Protocol):
     """Заглушка для Player"""
 
-    name: str
+    @property
+    def name(self) -> str: ...
+
+    @property
+    def balance(self) -> "Chip": ...
 
 
 class Chip(Protocol):
     """Заглушка для Chip"""
 
-    pass
+    @property
+    def value(self) -> int: ...
+
+    @property
+    def denomination(self) -> int: ...
+
+    @property
+    def total(self) -> int: ...
+
+    def __add__(self, other: Union["Chip", int, float]) -> "Chip": ...
+    def __sub__(self, other: Union["Chip", int, float]) -> "Chip": ...
 
 
-class HasCollection(Protocol):
-    """Заглушка для объектов с коллекцией"""
+class Goose(Protocol):
+    """Заглушка для Goose"""
 
-    _collection: list[Any]
+    @property
+    def name(self) -> str: ...
+
+    @property
+    def honk_volume(self) -> int: ...
+
+    def execute(self) -> str: ...
+
+
+class ChipTransactionProtocol(Protocol):
+    """Заглушка для ChipTransaction"""
+
+    chip: Any
+    event: str
+
+    def __repr__(self) -> str: ...
+
+
+class PlayerCollectionProtocol(Protocol):
+    """Заглушка для PlayerCollection"""
+
+    def __len__(self) -> int: ...
+    def __iter__(self) -> Iterator[Any]: ...
+    def append(self, value: Any) -> None: ...
+    def remove(self, value: Any) -> None: ...
+    def clear(self) -> None: ...
+
+
+class GooseCollectionProtocol(Protocol):
+    """Заглушка для GooseCollection"""
+
+    def __len__(self) -> int: ...
+    def __iter__(self) -> Iterator[Any]: ...
+    def append(self, value: Any) -> None: ...
+    def remove(self, value: Any) -> None: ...
+    def clear(self) -> None: ...
+
+
+class ChipCollectionProtocol(Protocol):
+    """Заглушка для ChipCollection"""
+
+    def __len__(self) -> int: ...
+    def __iter__(self) -> Iterator[Any]: ...
+    def append(self, chip: Any, event: str) -> None: ...
+    def clear(self) -> None: ...
+
+
+class CasinoBalanceProtocol(Protocol):
+    """Заглушка для CasinoBalance"""
+
+    def __getitem__(self, key: str) -> Any: ...
+    def __setitem__(self, key: str, value: Any) -> None: ...
+    def __delitem__(self, key: str) -> None: ...
+    def __len__(self) -> int: ...
+    def __iter__(self) -> Iterator[str]: ...
+    def items(self) -> Iterator[tuple[str, Any]]: ...
+    def clear(self) -> None: ...
+
+
+class LoggerProtocol(Protocol):
+    """Заглушка для Logger"""
+
+    @staticmethod
+    def setup_logging() -> None: ...
+
+    @staticmethod
+    def start_execution(command: str) -> None: ...
+
+    @staticmethod
+    def success_execution(command: str) -> None: ...
+
+    @staticmethod
+    def failure_execution(message: Exception) -> None: ...
+
+    @staticmethod
+    def event_start(event_name: str) -> None: ...
+
+    @staticmethod
+    def balance_change(player: str, old: int, new: int) -> None: ...
+
+    @staticmethod
+    def chip_added(chip_value: int, reason: str) -> None: ...
+
+    @staticmethod
+    def entity_removed(
+        entity_type: str, name: str, details: str = ""
+    ) -> None: ...
+
+
+class CasinoProtocol(Protocol):
+    """Заглушка для Casino"""
+
+    _player_collection: PlayerCollectionProtocol
+    _goose_collection: GooseCollectionProtocol
+    _players_balance: CasinoBalanceProtocol
+    _geese_balance: CasinoBalanceProtocol
+    _chips_history: ChipCollectionProtocol
+
+    def _check_players_collection(self, action: str) -> None: ...
+
+    def _check_goose_collection(
+        self,
+        collection: GooseCollectionProtocol,
+        action: str,
+    ) -> None: ...
+
+
+Casino = CasinoProtocol
+Logger = LoggerProtocol
+PlayerCollection = PlayerCollectionProtocol
+GooseCollection = GooseCollectionProtocol
+ChipTransaction = ChipTransactionProtocol

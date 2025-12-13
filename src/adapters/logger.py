@@ -1,7 +1,9 @@
 import logging
 
+from src.entities.protocols import LoggerProtocol
 
-class Logger:
+
+class Logger(LoggerProtocol):
     @staticmethod
     def setup_logging() -> None:
         """

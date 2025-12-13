@@ -2,7 +2,13 @@ from functools import wraps
 from typing import Any, Callable, Union
 
 from src.entities.errors import ValidationError
-from src.entities.protocols import Chip, Goose, HasCollection, Player
+from src.entities.protocols import (
+    Chip,
+    Goose,
+    GooseCollection,
+    Player,
+    PlayerCollection,
+)
 
 
 def validate_honk_volume(func: Callable[..., None]) -> Callable[..., None]:
@@ -30,8 +36,10 @@ def validate_unique_name(func: Callable[..., None]) -> Callable[..., None]:
     """
 
     @wraps(func)
-    def wrapper(self: HasCollection, value: Player | Goose) -> None:
-        for item in self._collection:
+    def wrapper(
+        self: PlayerCollection | GooseCollection, value: Player | Goose
+    ) -> None:
+        for item in self:
             if item.name == value.name:
                 raise ValidationError("Объект с таким именем уже был создан")
 

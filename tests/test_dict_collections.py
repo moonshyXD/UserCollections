@@ -43,7 +43,7 @@ class TestCasinoBalance:
         balance = CasinoBalance()
         balance["PeterZhabin"] = 10
         balance["SamirAhmed"] = 20
-        items = dict(balance)
+        items = dict(balance.items())
         assert "PeterZhabin" in items
         assert "SamirAhmed" in items
 

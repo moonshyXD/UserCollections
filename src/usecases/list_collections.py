@@ -2,10 +2,16 @@ from src.entities.chip import Chip
 from src.entities.collection import BaseCollection
 from src.entities.goose import Goose
 from src.entities.player import Player
+from src.entities.protocols import (
+    ChipCollectionProtocol,
+    ChipTransactionProtocol,
+    GooseCollectionProtocol,
+    PlayerCollectionProtocol,
+)
 from src.entities.validators import validate_unique_name
 
 
-class ChipTransaction:
+class ChipTransaction(ChipTransactionProtocol):
     def __init__(self, chip: Chip, event: str) -> None:
         """
         Инициализировать транзакцию фишки
@@ -23,7 +29,7 @@ class ChipTransaction:
         return f"({self.chip}, '{self.event}')"
 
 
-class PlayerCollection(BaseCollection[Player]):
+class PlayerCollection(BaseCollection[Player], PlayerCollectionProtocol):
     @validate_unique_name
     def append(self, value: Player) -> None:
         """
@@ -48,7 +54,7 @@ class PlayerCollection(BaseCollection[Player]):
         return str(self._collection)
 
 
-class GooseCollection(BaseCollection[Goose]):
+class GooseCollection(BaseCollection[Goose], GooseCollectionProtocol):
     @validate_unique_name
     def append(self, value: Goose) -> None:
         """
@@ -73,7 +79,7 @@ class GooseCollection(BaseCollection[Goose]):
         return str(self._collection)
 
 
-class ChipCollection(BaseCollection[ChipTransaction]):
+class ChipCollection(BaseCollection[ChipTransaction], ChipCollectionProtocol):
     def append(self, chip: Chip, event: str) -> None:
         """
         Добавить транзакцию фишки в историю

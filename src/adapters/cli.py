@@ -92,7 +92,7 @@ class CLI:
         for player in casino._player_collection:
             if player.name == player_name:
                 casino._player_collection.remove(player)
-                del casino._players_balance._balance[player_name]
+                del casino._players_balance[player_name]
                 print(f"Игрок {player_name} удален!")
                 break
 
@@ -110,7 +110,7 @@ class CLI:
         for goose in casino._goose_collection:
             if goose.name == goose_name:
                 casino._goose_collection.remove(goose)
-                del casino._geese_balance._balance[goose_name]
+                del casino._geese_balance[goose_name]
                 print(f"Гусь {goose_name} удален!")
                 break
 
@@ -128,22 +128,22 @@ class CLI:
 
         match clear_choice:
             case "Всё":
-                casino._player_collection._collection.clear()
-                casino._goose_collection._collection.clear()
-                casino._players_balance._balance.clear()
-                casino._geese_balance._balance.clear()
-                casino._chips_history._collection.clear()
+                casino._player_collection.clear()
+                casino._goose_collection.clear()
+                casino._players_balance.clear()
+                casino._geese_balance.clear()
+                casino._chips_history.clear()
                 print("Все коллекции очищены!")
             case "Только игроков":
-                casino._player_collection._collection.clear()
-                casino._players_balance._balance.clear()
+                casino._player_collection.clear()
+                casino._players_balance.clear()
                 print("Коллекция игроков очищена!")
             case "Только гусей":
-                casino._goose_collection._collection.clear()
-                casino._geese_balance._balance.clear()
+                casino._goose_collection.clear()
+                casino._geese_balance.clear()
                 print("Коллекция гусей очищена!")
             case "Историю фишек":
-                casino._chips_history._collection.clear()
+                casino._chips_history.clear()
                 print("История фишек очищена!")
 
     @staticmethod
@@ -201,8 +201,8 @@ class CLI:
 
             match dict_collection:
                 case "Балансы игроков":
-                    for name, balance in casino._players_balance:
+                    for name, balance in casino._players_balance.items():
                         print(f"{name}: {balance}")
                 case "Балансы гусей":
-                    for name, balance in casino._geese_balance:
+                    for name, balance in casino._geese_balance.items():
                         print(f"{name}: {balance}")

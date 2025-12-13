@@ -1,9 +1,10 @@
 from typing import Iterator
 
 from src.entities.chip import Chip
+from src.entities.protocols import CasinoBalanceProtocol
 
 
-class CasinoBalance:
+class CasinoBalance(CasinoBalanceProtocol):
     def __init__(self) -> None:
         """Инициализировать словарь балансов"""
         self._balance: dict[str, Chip] = {}
@@ -28,10 +29,36 @@ class CasinoBalance:
         """
         return self._balance[key]
 
-    def __iter__(self) -> Iterator[tuple[str, Chip]]:
+    def __delitem__(self, key: str) -> None:
+        """
+        Удалить баланс по ключу
+        :param key: Имя игрока или гуся
+        """
+        del self._balance[key]
+
+    def __contains__(self, key: str) -> bool:
+        """
+        Проверить наличие ключа в балансе
+        :param key: Имя игрока или гуся
+        :return: True если ключ существует
+        """
+        return key in self._balance
+
+    def clear(self) -> None:
+        """Очистить все балансы"""
+        self._balance.clear()
+
+    def __iter__(self) -> Iterator[str]:
+        """
+        Получить итератор по ключам
+        :return: Итератор ключей словаря балансов
+        """
+        return iter(self._balance)
+
+    def items(self) -> Iterator[tuple[str, Chip]]:
         """
         Получить итератор по парам ключ-значение
-        :return: Итератор словаря балансов
+        :return: Итератор пар ключ-значение
         """
         return iter(self._balance.items())
 

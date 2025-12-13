@@ -47,6 +47,7 @@ class Chip:
         """
         if isinstance(other, Chip):
             return Chip(self.total + other.total, denomination=1)
+
         return Chip(self.total + int(other), denomination=1)
 
     @validate_chip
@@ -60,6 +61,7 @@ class Chip:
         if isinstance(other, Chip):
             new_value = max(0, self.total - other.total)
             return Chip(new_value, denomination=1)
+
         new_value = max(0, self.total - int(other))
         return Chip(new_value, denomination=1)
 
@@ -70,4 +72,5 @@ class Chip:
         """
         if self.denomination == 1:
             return f"Фишка({self.value})"
+
         return f"({self.value}x{self.denomination}={self.total})"

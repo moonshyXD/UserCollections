@@ -70,3 +70,7 @@ class BaseCollection(ABC, Sequence[T], Generic[T]):
         :return: Строка с содержимым коллекции
         """
         pass
+
+    def clear(self) -> None:
+        """Очистить коллекцию"""
+        self._collection.clear()
