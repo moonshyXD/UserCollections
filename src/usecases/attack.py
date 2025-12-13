@@ -3,7 +3,7 @@ import random
 from src.entities.chip import Chip
 from src.entities.event import BaseEvent
 from src.entities.goose import WarGoose
-from src.entities.protocols import CasinoProtocol, LoggerProtocol
+from src.entities.protocols import CasinoProtocol, LoggerProtocol, Player
 
 
 class Attack(BaseEvent):
@@ -25,9 +25,9 @@ class Attack(BaseEvent):
         casino._check_goose_collection(war_geese, action)
 
         goose = random.choice(war_geese)
-        player = random.choice(list(casino._player_collection))
-        damage = random.randint(1, 100)
+        player: Player = random.choice(casino._player_collection)
 
+        damage = random.randint(1, 100)
         cur_chip = casino._players_balance[player.name]
         old_balance = cur_chip.value
         new_value = max(0, old_balance - damage)

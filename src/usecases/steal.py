@@ -24,8 +24,8 @@ class Steal(BaseEvent):
         casino._check_players_collection(action)
         casino._check_goose_collection(casino._goose_collection, action)
 
-        goose: Goose = random.choice(list(casino._goose_collection))
-        player: Player = random.choice(list(casino._player_collection))
+        goose: Goose = random.choice(casino._goose_collection)
+        player: Player = random.choice(casino._player_collection)
 
         stolen = min(
             random.randint(1, 100), casino._players_balance[player.name].value

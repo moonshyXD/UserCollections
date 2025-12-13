@@ -18,7 +18,7 @@ class Freebet(BaseEvent):
 
         casino._check_players_collection(action)
 
-        player: Player = random.choice(list(casino._player_collection))
+        player: Player = random.choice(casino._player_collection)
         old_balance = casino._players_balance[player.name].value
         new_balance = old_balance + 50
 

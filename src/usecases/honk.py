@@ -3,7 +3,12 @@ import random
 from src.entities.chip import Chip
 from src.entities.event import BaseEvent
 from src.entities.goose import HonkGoose
-from src.entities.protocols import CasinoProtocol, LoggerProtocol
+from src.entities.protocols import (
+    CasinoProtocol,
+    Goose,
+    LoggerProtocol,
+    Player,
+)
 
 
 class Honk(BaseEvent):
@@ -29,7 +34,7 @@ class Honk(BaseEvent):
         stun_chip = Chip(10)
 
         if honk_volume <= 50:
-            player = random.choice(list(casino._player_collection))
+            player: Player = random.choice(casino._player_collection)
             old_balance = casino._players_balance[player.name].value
             new_balance = old_balance - 10
 
@@ -43,7 +48,7 @@ class Honk(BaseEvent):
 
             print(f"Гусь кричит! {player.name} оглушился и потерял 10 фишек")
         else:
-            random_goose = random.choice(list(casino._goose_collection))
+            random_goose: Goose = random.choice(casino._goose_collection)
             old_balance = casino._geese_balance[random_goose.name].value
             new_balance = old_balance - 10
 

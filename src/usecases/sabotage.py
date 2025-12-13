@@ -18,7 +18,7 @@ class Sabotage(BaseEvent):
         casino._check_players_collection(action)
         casino._check_goose_collection(casino._goose_collection, action)
 
-        players = list(casino._player_collection)
+        players = casino._player_collection
         player_balances = [casino._players_balance[p.name] for p in players]
         random.shuffle(player_balances)
 
@@ -28,7 +28,7 @@ class Sabotage(BaseEvent):
             casino._players_balance[players[i].name] = player_balances[i]
             logger.balance_change(players[i].name, old_balance, new_balance)
 
-        geese = list(casino._goose_collection)
+        geese = casino._goose_collection
         goose_balances = [casino._geese_balance[g.name] for g in geese]
         random.shuffle(goose_balances)
 

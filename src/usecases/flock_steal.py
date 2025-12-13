@@ -25,7 +25,7 @@ class FlockSteal(BaseEvent):
         casino._check_goose_collection(war_geese, action)
 
         geese_count = random.randint(1, len(war_geese))
-        player = random.choice(list(casino._player_collection))
+        player = random.choice(casino._player_collection)
         player_chip = casino._players_balance[player.name]
 
         if player_chip.value == 0:

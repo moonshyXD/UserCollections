@@ -17,7 +17,7 @@ class FruitParty(BaseEvent):
 
         casino._check_players_collection(action)
 
-        player: Player = random.choice(list(casino._player_collection))
+        player: Player = random.choice(casino._player_collection)
         lost_chips = casino._players_balance[player.name]
         old_balance = lost_chips.value
 
