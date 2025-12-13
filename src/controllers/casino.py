@@ -9,7 +9,7 @@ from src.entities.player import Player
 from src.entities.protocols import (
     CasinoProtocol,
     GooseCollectionProtocol,
-    Logger,
+    LoggerProtocol,
 )
 from src.usecases.attack import Attack
 from src.usecases.bet import Bet
@@ -29,9 +29,12 @@ from src.usecases.steal import Steal
 
 
 class Casino(CasinoProtocol):
-    def __init__(self) -> None:
+    logger: LoggerProtocol
+
+    def __init__(self, logger: LoggerProtocol | None = None) -> None:
         """Инициализировать казино с пустыми коллекциями"""
-        Logger.setup_logging()
+        self.logger = logger if logger is not None else LoggerProtocol
+        self.logger.setup_logging()
         self._goose_collection = GooseCollection()
         self._players_balance = CasinoBalance()
         self._geese_balance = CasinoBalance()
@@ -45,7 +48,7 @@ class Casino(CasinoProtocol):
         """
         if seed is not None:
             random.seed(seed)
-            Logger.start_execution(f"Установлен seed: {seed}")
+            self.logger.start_execution(f"Установлен seed: {seed}")
 
     def _check_players_collection(self, action: str) -> None:
         """
@@ -77,7 +80,7 @@ class Casino(CasinoProtocol):
         """
         self._goose_collection.append(value)
         self._geese_balance[value.name] = Chip(0)
-        Logger.success_execution(f"Зарегистрирован гусь: {value.name}")
+        self.logger.success_execution(f"Зарегистрирован гусь: {value.name}")
 
     def register_player(self, value: Player) -> None:
         """
@@ -86,7 +89,7 @@ class Casino(CasinoProtocol):
         """
         self._player_collection.append(value)
         self._players_balance[value.name] = value.balance
-        Logger.success_execution(
+        self.logger.success_execution(
             f"Зарегистрирован игрок {value.name} баланс: {value.balance.value}"
         )
 
@@ -99,18 +102,18 @@ class Casino(CasinoProtocol):
 
     def run_simulation(self, steps: int = 20, seed: int | None = None) -> None:
         self._set_seed(seed)
-        Logger.start_execution(f"Симуляция на {steps} шагов")
+        self.logger.start_execution(f"Симуляция на {steps} шагов")
 
         actions = [
-            lambda cas: Attack.execute(cas, Logger),
-            lambda cas: Bet.execute(cas, Logger),
-            lambda cas: Honk.execute(cas, Logger),
-            lambda cas: Steal.execute(cas, Logger),
-            lambda cas: Sabotage.execute(cas, Logger),
-            lambda cas: Freebet.execute(cas, Logger),
-            lambda cas: FruitParty.execute(cas, Logger),
-            lambda cas: FlockSteal.execute(cas, Logger),
-            lambda cas: BonusRain.execute(cas, Logger),
+            lambda cas: Attack.execute(cas, self.logger),
+            lambda cas: Bet.execute(cas, self.logger),
+            lambda cas: Honk.execute(cas, self.logger),
+            lambda cas: Steal.execute(cas, self.logger),
+            lambda cas: Sabotage.execute(cas, self.logger),
+            lambda cas: Freebet.execute(cas, self.logger),
+            lambda cas: FruitParty.execute(cas, self.logger),
+            lambda cas: FlockSteal.execute(cas, self.logger),
+            lambda cas: BonusRain.execute(cas, self.logger),
         ]
 
         for step in range(1, steps + 1):
@@ -119,8 +122,8 @@ class Casino(CasinoProtocol):
                 print(f"\nСобытие {step}/{steps}")
                 action(self)
             except EntitiesError as e:
-                Logger.failure_execution(e)
+                self.logger.failure_execution(e)
                 print(f"Ошибка: {e}")
 
         random.seed(time.time())
-        Logger.success_execution("Симуляция завершена")
+        self.logger.success_execution("Симуляция завершена")

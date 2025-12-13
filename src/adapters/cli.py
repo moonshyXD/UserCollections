@@ -1,9 +1,12 @@
 import questionary
 
+from src.adapters.logger import Logger
 from src.controllers.casino import Casino
 from src.entities.errors import CasinoError
 from src.entities.goose import Goose, HonkGoose, WarGoose
 from src.entities.player import Player
+
+logger = Logger()
 
 
 class CLI:
@@ -19,7 +22,7 @@ class CLI:
 
     @staticmethod
     def run() -> None:
-        casino = Casino()
+        casino = Casino(logger)
         while (
             choice := questionary.select(
                 "Выберите действие:",
